@@ -4,20 +4,7 @@ Behat Zend framework integration
 Integration (Behat)[http://behat.org/en/latest/] ^3.1 with ``Zend\Mvc\ApplicationInterface``.
 This should allow integrate with Zend framework v2.* and v3.*.
 
-## Installing extension
-
-The easiest way to install is by using [Composer](https://getcomposer.org):
-
-```bash
-$> curl -sS https://getcomposer.org/installer | php
-$> php composer.phar require alteris/behat-zendframework-extension='1.0.*'
-```
-
-or composer.json
-
-    "require": {
-        "alteris/behat-zendframework-extension": "1.0.*"
-    },
+Right now middle of development.
 
 ## Versioning
 

@@ -1,0 +1,24 @@
+parameters:
+  zendframework_extension.context.initializer.class: Alteris\BehatZendframeworkExtension\Context\Initializer\ContextInitializer
+  zendframework_extension.zend.factory.class: Alteris\BehatZendframeworkExtension\Zend\Factory
+
+services:
+  zendframework_extension.zend.factory:
+    class: "%zendframework_extension.zend.factory.class%"
+    arguments: ["%zendframework_extension.selected_factory%"]
+
+  zendframework_extension.zend.application:
+    class: Zend\Mvc\ApplicationInterface
+    factory: ["@zendframework_extension.zend.factory", factory]
+
+  zendframework_extension.context.initializer:
+    class: "%zendframework_extension.context.initializer.class%"
+    arguments: ["@zendframework_extension.zend.application"]
+    tags:
+      -  { name: context.initializer }
+
+  zendframework_extension.zend.application.factory:
+    class: Alteris\BehatZendframeworkExtension\Zend\Application\ApplicationFactory
+    arguments: ["%zendframework_extension.configuration%"]
+    tags:
+      -  { name: zendframework_extension.factory_tag }

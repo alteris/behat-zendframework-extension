@@ -64,6 +64,10 @@ The FeatureContext will then be initialized with the service from the Zend Frame
         }
     }
     
+## Extra
+
+* Available integration with [Apigility](https://apigility.org/) with [Alteris\BehatApigilityExtension](https://github.com/alteris/behat-apigility-extension) 
+
 ## Examples
 
 * [Application](https://github.com/alteris/behat-zendframework-extension/blob/master/features/application.feature)

@@ -23,20 +23,19 @@ or composer.json
 
 You can then activate the extension in your ``behat.yml``:
 
-   .. code-block:: yaml
-
         default:
             # ...
             extensions:
                 Alteris\BehatZendframeworkExtension\ServiceContainer\Extension:
                     configuration: PATH_TO_application.config.php
                     
+## Injecting Application
+
+Your context need to implement ``Alteris\BehatZendframeworkExtension\Context\ContextAwareInterface`` and will be intialized with ``Zend\Mcv\ApplicationInterface``;
+                    
 ## Injecting Services
 
-The extension will automatically convert parameters injected into a context that
-start with '@' into services:
-
-.. code-block:: yaml
+The extension will automatically convert parameters injected into a context. You need to have set alias/name starting with '@':
 
     default:
         suites:
@@ -48,9 +47,7 @@ start with '@' into services:
                 Alteris\BehatZendframeworkExtension\ServiceContainer\Extension:
                     configuration: PATH_TO_application.config.php
 
-The FeatureContext will then be initialized with the Symfony2 session from the container:
-
-.. code-block:: php
+The FeatureContext will then be initialized with the service from the Zend Framework container:
 
     <?php
     
@@ -66,6 +63,11 @@ The FeatureContext will then be initialized with the Symfony2 session from the c
             //Service from Zend\Mvc\Application
         }
     }
+    
+## Examples
+
+* [Application](https://github.com/alteris/behat-zendframework-extension/blob/master/features/application.feature)
+* [Argument Resolver](https://github.com/alteris/behat-zendframework-extension/blob/master/features/argument_resolver.feature)
     
 ## Versioning
 

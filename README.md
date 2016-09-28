@@ -1,7 +1,7 @@
 Behat Zend framework integration
 ================================
 
-Integration (Behat)[http://behat.org/en/latest/] ^3.1 with ``Zend\Mvc\ApplicationInterface``.
+Integration [Behat](http://behat.org/en/latest/) ^3.1 with ``Zend\Mvc\ApplicationInterface``.
 This should allow integrate with Zend framework v2.* and v3.*.
 
 Right now middle of development.

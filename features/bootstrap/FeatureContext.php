@@ -48,7 +48,6 @@ class FeatureContext implements Context
 
     private static function clearDirectory($path)
     {
-        return;
         $files = scandir($path);
         array_shift($files);
         array_shift($files);
@@ -100,16 +99,6 @@ class FeatureContext implements Context
         $this->createFile($this->workingDir . '/' . $filename, $content);
     }
 
-    private function createFile($filename, $content)
-    {
-        $path = dirname($filename);
-        if (!is_dir($path)) {
-            mkdir($path, 0777, true);
-        }
-
-        file_put_contents($filename, $content);
-    }
-
     /**
      * Moves user to the specified path.
      *
@@ -120,16 +109,6 @@ class FeatureContext implements Context
     public function iAmInThePath($path)
     {
         $this->moveToNewPath($path);
-    }
-
-    private function moveToNewPath($path)
-    {
-        $newWorkingDir = $this->workingDir . '/' . $path;
-        if (!file_exists($newWorkingDir)) {
-            mkdir($newWorkingDir, 0777, true);
-        }
-
-        $this->workingDir = $newWorkingDir;
     }
 
     /**
@@ -199,7 +178,6 @@ class FeatureContext implements Context
      */
     public function itShouldPassWith($success, PyStringNode $text)
     {
-//        $this->itShouldFail($success);
         $this->theOutputShouldContain($text);
     }
 
@@ -213,6 +191,72 @@ class FeatureContext implements Context
     public function theOutputShouldContain(PyStringNode $text)
     {
         PHPUnit_Framework_Assert::assertContains($this->getExpectedOutput($text), $this->getOutput());
+    }
+
+    /**
+     * Checks whether specified file exists and contains specified string.
+     *
+     * @Then /^"([^"]*)" file should contain:$/
+     *
+     * @param   string $path file path
+     * @param   PyStringNode $text file content
+     */
+    public function fileShouldContain($path, PyStringNode $text)
+    {
+        $path = $this->workingDir . '/' . $path;
+        PHPUnit_Framework_Assert::assertFileExists($path);
+
+        $fileContent = trim(file_get_contents($path));
+        // Normalize the line endings in the output
+        if ("\n" !== PHP_EOL) {
+            $fileContent = str_replace(PHP_EOL, "\n", $fileContent);
+        }
+
+        PHPUnit_Framework_Assert::assertEquals($this->getExpectedOutput($text), $fileContent);
+    }
+
+    /**
+     * Checks whether previously ran command failed|passed.
+     *
+     * @Then /^it should (fail|pass)$/
+     *
+     * @param   string $success "fail" or "pass"
+     */
+    public function itShouldFail($success)
+    {
+        if ('fail' === $success) {
+            if (0 === $this->getExitCode()) {
+                echo 'Actual output:' . PHP_EOL . PHP_EOL . $this->getOutput();
+            }
+
+            PHPUnit_Framework_Assert::assertNotEquals(0, $this->getExitCode());
+        } else {
+            if (0 !== $this->getExitCode()) {
+                echo 'Actual output:' . PHP_EOL . PHP_EOL . $this->getOutput();
+            }
+
+            PHPUnit_Framework_Assert::assertEquals(0, $this->getExitCode());
+        }
+    }
+
+    private function createFile($filename, $content)
+    {
+        $path = dirname($filename);
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
+
+        file_put_contents($filename, $content);
+    }
+
+    private function moveToNewPath($path)
+    {
+        $newWorkingDir = $this->workingDir . '/' . $path;
+        if (!file_exists($newWorkingDir)) {
+            mkdir($newWorkingDir, 0777, true);
+        }
+
+        $this->workingDir = $newWorkingDir;
     }
 
     private function getExpectedOutput(PyStringNode $expectedText)
@@ -263,52 +307,6 @@ class FeatureContext implements Context
         $output = str_replace('Notice: Undefined index: ', 'Notice: Undefined offset: ', $output);
 
         return trim(preg_replace("/ +$/m", '', $output));
-    }
-
-    /**
-     * Checks whether specified file exists and contains specified string.
-     *
-     * @Then /^"([^"]*)" file should contain:$/
-     *
-     * @param   string $path file path
-     * @param   PyStringNode $text file content
-     */
-    public function fileShouldContain($path, PyStringNode $text)
-    {
-        $path = $this->workingDir . '/' . $path;
-        PHPUnit_Framework_Assert::assertFileExists($path);
-
-        $fileContent = trim(file_get_contents($path));
-        // Normalize the line endings in the output
-        if ("\n" !== PHP_EOL) {
-            $fileContent = str_replace(PHP_EOL, "\n", $fileContent);
-        }
-
-        PHPUnit_Framework_Assert::assertEquals($this->getExpectedOutput($text), $fileContent);
-    }
-
-    /**
-     * Checks whether previously ran command failed|passed.
-     *
-     * @Then /^it should (fail|pass)$/
-     *
-     * @param   string $success "fail" or "pass"
-     */
-    public function itShouldFail($success)
-    {
-        if ('fail' === $success) {
-            if (0 === $this->getExitCode()) {
-                echo 'Actual output:' . PHP_EOL . PHP_EOL . $this->getOutput();
-            }
-
-            PHPUnit_Framework_Assert::assertNotEquals(0, $this->getExitCode());
-        } else {
-            if (0 !== $this->getExitCode()) {
-                echo 'Actual output:' . PHP_EOL . PHP_EOL . $this->getOutput();
-            }
-
-            PHPUnit_Framework_Assert::assertEquals(0, $this->getExitCode());
-        }
     }
 
     private function getExitCode()

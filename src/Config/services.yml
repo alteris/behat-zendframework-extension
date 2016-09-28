@@ -22,3 +22,9 @@ services:
     arguments: ["%zendframework_extension.configuration%"]
     tags:
       -  { name: zendframework_extension.factory_tag }
+
+  zendframework_extension.behat.argument_resolver:
+    class: Alteris\BehatZendframeworkExtension\Context\Argument\ServiceArgumentResolver
+    arguments: ["@zendframework_extension.zend.application"]
+    tags:
+      -  { name: context.argument_resolver }
